@@ -1,23 +1,24 @@
 name: Deploy to GitHub Pages
 
+# Pages on this repo is configured as "Deploy from a branch: gh-pages", which
+# is what pushing that branch set up automatically. So this builds and force
+# pushes dist/ there, rather than using actions/deploy-pages — that action
+# needs the source set to "GitHub Actions" and 404s against a branch source.
+
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
-# Allow the workflow to publish to Pages
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
-# Let a running deploy finish; queue at most one more
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,20 +32,23 @@ jobs:
 
       - run: npm run build
 
-      # Pages serves no SPA fallback; this project is a single page, but a copy
-      # of index.html as 404.html keeps deep links and refreshes working.
-      - run: cp dist/index.html dist/404.html
+      - name: Prepare the published tree
+        run: |
+          # Single-page site: serving index.html as 404 keeps refreshes and
+          # deep links working. .nojekyll stops Pages from filtering files.
+          cp dist/index.html dist/404.html
+          touch dist/.nojekyll
 
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Publish to gh-pages
+        working-directory: dist
+        run: |
+          git init -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Publish ${GITHUB_SHA::7}"
+          git push --force \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

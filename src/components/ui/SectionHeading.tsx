@@ -30,11 +30,8 @@ export function Kicker({
           style={{ animation: 'gg-pulse-ring 2.8s var(--ease-brand) infinite' }}
         />
       </span>
-      <span
-        className={`text-[0.68rem] font-medium tracking-[0.28em] uppercase ${text} rtl:tracking-[0.12em]`}
-      >
-        {children}
-      </span>
+      {/* `gg-eyebrow` carries its own per-direction sizing — see index.css */}
+      <span className={`gg-eyebrow ${text}`}>{children}</span>
       <motion.span
         className={`h-px flex-1 origin-[inline-start] ${line} max-w-[7rem]`}
         initial={{ scaleX: 0 }}

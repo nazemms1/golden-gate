@@ -305,11 +305,32 @@ html[dir='rtl'] {
 
   html[dir='rtl'] [class*='text-[0.5'],
   html[dir='rtl'] [class*='text-[0.6'] {
-    font-size: 0.86rem;
+    font-size: 0.92rem;
   }
 
   html[dir='rtl'] [class*='text-[0.7'] {
-    font-size: 0.91rem;
+    font-size: 0.95rem;
+  }
+
+  /*
+   * Section eyebrows. The Latin form is a small, wide-tracked all-caps label
+   * that leans on those devices to register as a label rather than body text.
+   * Arabic has none of them available, so it earns its place through size and
+   * colour instead — which is why the two directions are set independently
+   * rather than sharing one size with a tracking tweak.
+   */
+  .gg-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+
+  html[dir='rtl'] .gg-eyebrow {
+    font-size: 1.06rem;
+    font-weight: 600;
+    letter-spacing: normal;
+    text-transform: none;
   }
 }
 

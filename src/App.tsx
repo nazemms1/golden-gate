@@ -16,6 +16,8 @@ import { WhyUs } from './components/WhyUs';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { Marquee } from './components/ui/Marquee';
+import { Cursor } from './components/ui/Cursor';
+import { QuickDock } from './components/ui/QuickDock';
 
 function MarqueeBand() {
   const { t } = useLang();
@@ -26,6 +28,19 @@ function MarqueeBand() {
   );
 }
 
+/** Keyboard users land here first; it is the only reason it is focusable. */
+function SkipLink() {
+  const { t } = useLang();
+  return (
+    <a
+      href="#main"
+      className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:z-[120] focus:rounded-full focus:bg-gold-gradient focus:px-5 focus:py-2.5 focus:text-[0.85rem] focus:font-medium focus:text-ink-950 ltr:focus:left-4 rtl:focus:right-4"
+    >
+      {t.ui.skipToContent}
+    </a>
+  );
+}
+
 function Site() {
   const [ready, setReady] = useState(false);
   useSmoothScroll(ready);
@@ -33,9 +48,11 @@ function Site() {
   return (
     <>
       <Preloader onDone={() => setReady(true)} />
+      <SkipLink />
+      <Cursor />
       <Header />
 
-      <main>
+      <main id="main">
         <Hero />
         <MarqueeBand />
         <About />
@@ -50,6 +67,8 @@ function Site() {
       </main>
 
       <Footer />
+
+      <QuickDock />
     </>
   );
 }

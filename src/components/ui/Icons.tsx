@@ -203,3 +203,76 @@ export const TelegramIcon = ({ className }: P) => (
     <path d="M21.9 4.3 18.6 20a1.2 1.2 0 0 1-1.9.7l-4.6-3.4-2.3 2.2a.9.9 0 0 1-1.5-.4l-1.7-5.6-4.4-1.4a.9.9 0 0 1 0-1.7l18-6.9a.9.9 0 0 1 1.2 1Zm-3.7 2.4L8.5 12.6l.9 3 .4-2.4 7.9-6.3a.3.3 0 0 0-.3-.5l-.2.3Z" />
   </svg>
 );
+
+/* ── controls ─────────────────────────────────────────────────────────────── */
+
+export const SearchIcon = ({ className }: P) => (
+  <S className={className}>
+    <circle cx="11" cy="11" r="6.5" />
+    <path d="m16 16 4.5 4.5" />
+  </S>
+);
+
+export const CopyIcon = ({ className }: P) => (
+  <S className={className}>
+    <rect x="9" y="9" width="11" height="11" rx="2.5" />
+    <path d="M15 5.5A2.5 2.5 0 0 0 12.5 3H6.5A3.5 3.5 0 0 0 3 6.5v6A2.5 2.5 0 0 0 5.5 15" />
+  </S>
+);
+
+export const PlusIcon = ({ className }: P) => (
+  <S className={className}>
+    <path d="M12 5v14M5 12h14" />
+  </S>
+);
+
+export const MinusIcon = ({ className }: P) => (
+  <S className={className}>
+    <path d="M5 12h14" />
+  </S>
+);
+
+export const TargetIcon = ({ className }: P) => (
+  <S className={className}>
+    <circle cx="12" cy="12" r="7.5" />
+    <circle cx="12" cy="12" r="2" />
+    <path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22" />
+  </S>
+);
+
+export const PlayIcon = ({ className }: P) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+    <path d="M8 5.6c0-.8.9-1.3 1.6-.9l9 6.4c.6.4.6 1.4 0 1.8l-9 6.4c-.7.4-1.6 0-1.6-.9V5.6Z" />
+  </svg>
+);
+
+export const PauseIcon = ({ className }: P) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+    <rect x="6.5" y="5" width="3.8" height="14" rx="1.3" />
+    <rect x="13.7" y="5" width="3.8" height="14" rx="1.3" />
+  </svg>
+);
+
+export const ChevronLeft = ({ className }: P) => (
+  <S className={className}>
+    <path d="m14.5 6-6 6 6 6" />
+  </S>
+);
+
+export const ChevronRight = ({ className }: P) => (
+  <S className={className}>
+    <path d="m9.5 6 6 6-6 6" />
+  </S>
+);
+
+export const ExpandIcon = ({ className }: P) => (
+  <S className={className}>
+    <path d="M9 3.5H3.5V9M15 3.5h5.5V9M9 20.5H3.5V15M15 20.5h5.5V15" />
+  </S>
+);
+
+export const ChatIcon = ({ className }: P) => (
+  <S className={className}>
+    <path d="M20.5 11.8a7.9 7.9 0 0 1-8.5 7.9 9 9 0 0 1-2.6-.4L4 21l1.4-4.2a7.6 7.6 0 0 1-1.9-5 7.9 7.9 0 0 1 8.5-7.7 8 8 0 0 1 8.5 7.7Z" />
+  </S>
+);

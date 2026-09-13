@@ -265,6 +265,41 @@ html[dir='rtl'] {
   .shadow-inset-hairline {
     box-shadow: inset 0 1px 0 0 color-mix(in srgb, var(--color-gold-200) 14%, transparent);
   }
+
+  /*
+   * The brand cursor replaces the system one only while <Cursor> is mounted,
+   * which it only is for a real mouse. Text fields keep a caret: losing the
+   * I-beam over an input is the one place a custom cursor actually costs the
+   * visitor information.
+   */
+  .gg-cursor-on,
+  .gg-cursor-on * {
+    cursor: none !important;
+  }
+
+  .gg-cursor-on input,
+  .gg-cursor-on textarea,
+  .gg-cursor-on [contenteditable] {
+    cursor: text !important;
+  }
+
+  /* Horizontal scrollers that should not advertise a scrollbar. */
+  .scrollbar-slim {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--color-gold-500) 50%, transparent) transparent;
+  }
+  .scrollbar-slim::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-slim::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-slim::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--color-gold-500) 45%, transparent);
+    border: none;
+    border-radius: 99px;
+  }
 }
 
 /*

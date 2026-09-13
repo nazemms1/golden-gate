@@ -1,10 +1,4 @@
-import {
-  motion,
-  useMotionTemplate,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-} from 'motion/react';
+import { motion, useMotionValue, useReducedMotion, useSpring } from 'motion/react';
 import type { MouseEvent } from 'react';
 import { useLang } from '@/lib/lang';
 import { LINKS } from '@/data/content';
@@ -15,18 +9,18 @@ import { Stagger, StaggerItem } from './ui/Reveal';
 import { Button } from './ui/Button';
 import { CheckIcon, DownloadIcon, ExternalIcon } from './ui/Icons';
 
-/** The physical card, rebuilt in CSS so it stays crisp and can be tilted. */
+/** The real card artwork, same file the live site serves at /assets/card.jpg. */
+const CARD_IMAGE = './img/card.jpg';
+
+/** The card itself — the actual artwork, on a frame that tilts under the cursor. */
 function CardVisual() {
   const reduce = useReducedMotion();
   const rx = useMotionValue(0);
   const ry = useMotionValue(0);
-  const gx = useMotionValue(50);
-  const gy = useMotionValue(50);
 
   const springCfg = { stiffness: 180, damping: 20, mass: 0.5 };
   const rotateX = useSpring(rx, springCfg);
   const rotateY = useSpring(ry, springCfg);
-  const glare = useMotionTemplate`radial-gradient(circle at ${gx}% ${gy}%, rgba(255,255,255,0.42), transparent 55%)`;
 
   const onMove = (e: MouseEvent<HTMLDivElement>) => {
     if (reduce) return;
@@ -35,15 +29,11 @@ function CardVisual() {
     const py = (e.clientY - r.top) / r.height;
     ry.set((px - 0.5) * 22);
     rx.set(-(py - 0.5) * 16);
-    gx.set(px * 100);
-    gy.set(py * 100);
   };
 
   const reset = () => {
     rx.set(0);
     ry.set(0);
-    gx.set(50);
-    gy.set(50);
   };
 
   return (
@@ -60,71 +50,15 @@ function CardVisual() {
         transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
       >
         <div className="relative h-full w-full overflow-hidden rounded-[1.4rem] shadow-[0_50px_90px_-40px_rgba(0,0,0,0.85)]">
-          {/* brushed navy body */}
-          <div className="absolute inset-0 bg-[linear-gradient(135deg,#04182e_0%,#072b4c_38%,#003262_58%,#04182e_100%)]" />
-          {/* gold arc echo of the mark */}
-          <svg
-            viewBox="0 0 400 252"
-            className="absolute inset-0 h-full w-full opacity-[0.5]"
-            aria-hidden="true"
-          >
-            <defs>
-              <linearGradient id="card-arc" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#9a7122" stopOpacity="0.1" />
-                <stop offset="55%" stopColor="#e3cd7c" stopOpacity="0.55" />
-                <stop offset="100%" stopColor="#9a7122" stopOpacity="0.05" />
-              </linearGradient>
-            </defs>
-            <circle cx="330" cy="130" r="118" fill="none" stroke="url(#card-arc)" strokeWidth="1.2" />
-            <circle cx="330" cy="130" r="86" fill="none" stroke="url(#card-arc)" strokeWidth="1.2" />
-            <circle cx="330" cy="130" r="54" fill="none" stroke="url(#card-arc)" strokeWidth="1.2" />
-          </svg>
-          {/* moving glare */}
-          <motion.div
-            className="absolute inset-0 mix-blend-overlay"
-            style={{ backgroundImage: glare }}
+          <img
+            src={CARD_IMAGE}
+            alt=""
+            draggable={false}
+            className="absolute inset-0 h-full w-full object-cover"
           />
 
-          {/* content */}
-          <div className="relative flex h-full flex-col justify-between p-[6%]" dir="ltr">
-            <div className="flex items-start justify-between">
-              <img src="./brand/mark.png" alt="" className="h-[22%] max-h-12 w-auto object-contain" />
-              <span className="text-[0.6rem] font-medium tracking-[0.3em] text-sand-50/55 uppercase">
-                Fuel Card
-              </span>
-            </div>
-
-            {/* chip */}
-            <div className="mt-auto flex items-end justify-between">
-              <div>
-                <div className="h-8 w-11 rounded-[5px] bg-[linear-gradient(135deg,#e3cd7c,#bd8f2c_45%,#f7edc6_70%,#9a7122)] shadow-inner">
-                  <div className="grid h-full w-full grid-cols-3 grid-rows-3 gap-px p-1 opacity-45">
-                    {Array.from({ length: 9 }).map((_, i) => (
-                      <span key={i} className="rounded-[1px] bg-ink-900/35" />
-                    ))}
-                  </div>
-                </div>
-                <div className="mt-3 font-display text-[clamp(0.8rem,2.1vw,1.05rem)] tracking-[0.16em] text-sand-50/92 tabular-nums">
-                  •••• •••• •••• 8515
-                </div>
-                <div className="mt-2 text-[0.6rem] tracking-[0.26em] text-gold-200/75 uppercase">
-                  Golden Gate
-                </div>
-              </div>
-
-              <div className="pb-1 text-end">
-                <div className="text-[0.52rem] tracking-[0.2em] text-sand-50/40 uppercase">
-                  Valid thru
-                </div>
-                <div className="font-display text-[0.78rem] text-sand-50/80 tabular-nums">
-                  ●● / ●●
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* edge highlight */}
-          <div className="pointer-events-none absolute inset-0 rounded-[1.4rem] ring-1 ring-gold-200/18 ring-inset" />
+          <div className="pointer-events-none absolute inset-0 rounded-[1.4rem] ring-1 ring-white/10 ring-inset" />
         </div>
       </motion.div>
     </div>

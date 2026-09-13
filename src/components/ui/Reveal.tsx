@@ -1,6 +1,25 @@
 import { motion, useReducedMotion, type Variants } from 'motion/react';
 import type { ElementType, ReactNode } from 'react';
 
+/**
+ * Motion components must be created once, not per render: calling
+ * motion.create() inside a render body hands React a brand-new component type
+ * every time, which remounts the subtree. A remounted child resets to its
+ * `hidden` variant, and since the parent's whileInView has already fired with
+ * once:true it never replays — so the content stays invisible. Language
+ * switching re-renders the whole page, which is exactly when that bites.
+ */
+const motionTags = new Map<ElementType, ElementType>();
+
+function motionTag(as: ElementType): ElementType {
+  let Tag = motionTags.get(as);
+  if (!Tag) {
+    Tag = motion.create(as as string) as ElementType;
+    motionTags.set(as, Tag);
+  }
+  return Tag;
+}
+
 type Props = {
   children: ReactNode;
   as?: ElementType;
@@ -25,7 +44,7 @@ export function Reveal({
   amount = 0.25,
 }: Props) {
   const reduce = useReducedMotion();
-  const MotionTag = motion(as as ElementType);
+  const MotionTag = motionTag(as);
 
   return (
     <MotionTag
@@ -84,7 +103,7 @@ export function StaggerItem({
   className?: string;
   as?: ElementType;
 }) {
-  const MotionTag = motion(as as ElementType);
+  const MotionTag = motionTag(as);
   return (
     <MotionTag className={className} variants={staggerChild}>
       {children}

@@ -42,6 +42,15 @@ export function scrollToId(id: string, offset = -72) {
   }
 }
 
+/** Returns to the top through Lenis when it is running, so the easing matches. */
+export function scrollToTop() {
+  if (lenisInstance) {
+    lenisInstance.scrollTo(0, { duration: 1.4 });
+  } else {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
 export function lockScroll(locked: boolean) {
   if (locked) {
     lenisInstance?.stop();

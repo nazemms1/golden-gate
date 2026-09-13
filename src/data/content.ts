@@ -127,6 +127,40 @@ type Dict = {
     };
   };
   footer: { rights: string; links: string; contact: string; built: string };
+  /**
+   * Labels for the interaction layer — controls, not content. Kept apart from
+   * the company copy above so the two never get edited into each other.
+   */
+  ui: {
+    skipToContent: string;
+    scrollHint: string;
+    toTop: string;
+    quickActions: string;
+    callUs: string;
+    sections: string;
+    searchPlaceholder: string;
+    noResults: string;
+    clearSearch: string;
+    resultCount: (n: number) => string;
+    copy: string;
+    copied: string;
+    close: string;
+    prev: string;
+    next: string;
+    zoomIn: string;
+    zoomOut: string;
+    resetView: string;
+    dragHint: string;
+    expand: string;
+    gallery: string;
+    viewLarger: string;
+    pause: string;
+    play: string;
+    tapHint: string;
+    charCount: (n: number, max: number) => string;
+    sendAnother: string;
+    directContact: string;
+  };
 };
 
 export const CONTENT: Record<Lang, Dict> = {
@@ -392,6 +426,36 @@ export const CONTENT: Record<Lang, Dict> = {
       contact: 'تواصل',
       built: 'دمشق · الجمهورية العربية السورية',
     },
+    ui: {
+      skipToContent: 'تخطَّ إلى المحتوى',
+      scrollHint: 'مرّر للأسفل',
+      toTop: 'العودة إلى الأعلى',
+      quickActions: 'إجراءات سريعة',
+      callUs: 'اتصل بنا',
+      sections: 'أقسام الصفحة',
+      searchPlaceholder: 'ابحث عن محطة أو مدينة…',
+      noResults: 'لا توجد محطات مطابقة لبحثك',
+      clearSearch: 'مسح البحث',
+      resultCount: (n: number) => `${n} نتيجة`,
+      copy: 'نسخ',
+      copied: 'تم النسخ',
+      close: 'إغلاق',
+      prev: 'السابق',
+      next: 'التالي',
+      zoomIn: 'تكبير',
+      zoomOut: 'تصغير',
+      resetView: 'إعادة ضبط العرض',
+      dragHint: 'اسحب للتحريك · استخدم العجلة للتكبير',
+      expand: 'التفاصيل',
+      gallery: 'معرض الصور',
+      viewLarger: 'عرض بحجم أكبر',
+      pause: 'إيقاف مؤقت',
+      play: 'تشغيل',
+      tapHint: 'اضغط لعرض التفاصيل',
+      charCount: (n: number, max: number) => `${n} / ${max} حرف`,
+      sendAnother: 'إرسال رسالة أخرى',
+      directContact: 'أو تواصل معنا مباشرة',
+    },
   },
 
   /* ───────────────────────────────── ENGLISH ──────────────────────────────── */
@@ -655,6 +719,36 @@ export const CONTENT: Record<Lang, Dict> = {
       links: 'Links',
       contact: 'Contact',
       built: 'Damascus · Syrian Arab Republic',
+    },
+    ui: {
+      skipToContent: 'Skip to content',
+      scrollHint: 'Scroll',
+      toTop: 'Back to top',
+      quickActions: 'Quick actions',
+      callUs: 'Call us',
+      sections: 'Page sections',
+      searchPlaceholder: 'Search a station or city…',
+      noResults: 'No stations match your search',
+      clearSearch: 'Clear search',
+      resultCount: (n: number) => `${n} result${n === 1 ? '' : 's'}`,
+      copy: 'Copy',
+      copied: 'Copied',
+      close: 'Close',
+      prev: 'Previous',
+      next: 'Next',
+      zoomIn: 'Zoom in',
+      zoomOut: 'Zoom out',
+      resetView: 'Reset view',
+      dragHint: 'Drag to pan · scroll to zoom',
+      expand: 'Details',
+      gallery: 'Gallery',
+      viewLarger: 'View larger',
+      pause: 'Pause',
+      play: 'Play',
+      tapHint: 'Tap for details',
+      charCount: (n: number, max: number) => `${n} / ${max}`,
+      sendAnother: 'Send another message',
+      directContact: 'Or reach us directly',
     },
   },
 };

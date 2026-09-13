@@ -1,0 +1,356 @@
+@import 'tailwindcss';
+
+/* ───────────────────────────────  Brand typefaces  ─────────────────────────── */
+
+@font-face {
+  font-family: 'Qomra';
+  src: url('../fonts/itfQomraArabic-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Qomra';
+  src: url('../fonts/itfQomraArabic-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Qomra';
+  src: url('../fonts/itfQomraArabic-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Qomra';
+  src: url('../fonts/itfQomraArabic-Medium.ttf') format('truetype');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Qomra';
+  src: url('../fonts/itfQomraArabic-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Qomra';
+  src: url('../fonts/itfQomraArabic-Black.ttf') format('truetype');
+  font-weight: 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Qomra';
+  src: url('../fonts/itfQomraArabic-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Qima';
+  src: url('../fonts/AAQIMA-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+
+/* ─────────────────────────────────  Design tokens  ─────────────────────────── */
+
+@theme {
+  /* Deep navy — taken from the company mark's wordmark */
+  --color-ink-950: #030f1e;
+  --color-ink-900: #04182e;
+  --color-ink-850: #06213d;
+  --color-ink-800: #072b4c;
+  --color-ink-700: #003262;
+  --color-ink-600: #0a4278;
+  --color-ink-500: #17578f;
+
+  /* Gold — taken from the crescent gradient */
+  --color-gold-50: #fdf8e9;
+  --color-gold-100: #f7edc6;
+  --color-gold-200: #eddfa2;
+  --color-gold-300: #e3cd7c;
+  --color-gold-400: #d9bb5c;
+  --color-gold-500: #cfa63c;
+  --color-gold-600: #bd8f2c;
+  --color-gold-700: #9a7122;
+
+  /* Signal gold used for highlights + focus */
+  --color-amber-bright: #fdb515;
+
+  /* Warm neutrals for light sections */
+  --color-sand-50: #faf8f4;
+  --color-sand-100: #f3efe7;
+  --color-sand-200: #e7e0d3;
+  --color-sand-300: #d3c8b4;
+  --color-sand-500: #8e8570;
+
+  --font-ar: 'Qomra', 'Segoe UI', Tahoma, sans-serif;
+  --font-display: 'Sora', 'Qomra', system-ui, sans-serif;
+  --font-qima: 'Qima', 'Qomra', sans-serif;
+
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --shadow-lift: 0 24px 70px -28px rgb(3 15 30 / 0.55);
+  --shadow-gold: 0 20px 60px -24px rgb(207 166 60 / 0.45);
+}
+
+/*
+ * Arabic pages swap the display stack to the brand's Qomra face at the token
+ * level. Overriding the variable — rather than the `font-display` class —
+ * matters: Tailwind emits that utility into the `utilities` layer, which wins
+ * over anything written in `base` no matter how specific the selector is.
+ * Every utility reads var(--font-display), so they all follow this.
+ */
+html[dir='rtl'] {
+  --font-display: 'Qomra', 'Segoe UI', Tahoma, sans-serif;
+}
+
+/* ─────────────────────────────────  Base layer  ────────────────────────────── */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: color-mix(in srgb, var(--color-ink-700) 12%, transparent);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: auto;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-ink-950);
+    color: var(--color-sand-50);
+    font-family: var(--font-display);
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+
+  html[dir='rtl'] h1,
+  html[dir='rtl'] h2,
+  html[dir='rtl'] h3,
+  html[dir='rtl'] h4 {
+    letter-spacing: 0;
+    line-height: 1.32;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--color-gold-400);
+    color: var(--color-ink-950);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold-400);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  input,
+  textarea,
+  button,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  /* Thin, brand-tinted scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-ink-950);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--color-gold-600) 55%, var(--color-ink-800));
+    border-radius: 99px;
+    border: 3px solid var(--color-ink-950);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-gold-500);
+  }
+}
+
+/* ─────────────────────────────────  Utilities  ─────────────────────────────── */
+
+@layer utilities {
+  /* Logical-direction helper: flips automatically under [dir] */
+  .start-0 {
+    inset-inline-start: 0;
+  }
+  .end-0 {
+    inset-inline-end: 0;
+  }
+
+  .text-gold-gradient {
+    background: linear-gradient(
+      108deg,
+      var(--color-gold-700) 0%,
+      var(--color-gold-300) 28%,
+      var(--color-gold-100) 46%,
+      var(--color-gold-400) 68%,
+      var(--color-gold-700) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .bg-gold-gradient {
+    background: linear-gradient(
+      108deg,
+      var(--color-gold-700) 0%,
+      var(--color-gold-400) 26%,
+      var(--color-gold-200) 50%,
+      var(--color-gold-500) 74%,
+      var(--color-gold-700) 100%
+    );
+  }
+
+  .border-hairline {
+    border-color: color-mix(in srgb, var(--color-gold-300) 22%, transparent);
+  }
+
+  .glass {
+    background: color-mix(in srgb, var(--color-ink-900) 62%, transparent);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+  }
+
+  .noise::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .mask-fade-b {
+    -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+  }
+
+  .mask-fade-x {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  }
+
+  .shadow-inset-hairline {
+    box-shadow: inset 0 1px 0 0 color-mix(in srgb, var(--color-gold-200) 14%, transparent);
+  }
+}
+
+/*
+ * Arabic display weights. Qomra's Medium (600) reads noticeably lighter than
+ * the Latin equivalent, so headings step up to Bold to keep the same presence
+ * the brand has in print. This lives in `utilities` because the per-component
+ * `font-semibold` classes are emitted there and would otherwise win.
+ */
+@layer utilities {
+  html[dir='rtl'] h1,
+  html[dir='rtl'] h2 {
+    font-weight: 700;
+  }
+
+  html[dir='rtl'] .font-qima {
+    font-family: var(--font-qima);
+  }
+}
+
+/* ──────────────────────────────  Keyframe motion  ──────────────────────────── */
+
+@keyframes gg-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes gg-pulse-ring {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.75;
+  }
+  70% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@keyframes gg-sheen {
+  0% {
+    transform: translateX(-130%) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(230%) skewX(-18deg);
+  }
+}
+
+/* Units are required here — Chrome drops a unitless stroke-dashoffset
+   inside @keyframes, which silently leaves the dashes frozen. */
+@keyframes gg-dash {
+  from {
+    stroke-dashoffset: 0px;
+  }
+  to {
+    stroke-dashoffset: -1000px;
+  }
+}
+
+@keyframes gg-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-marquee {
+  animation: gg-marquee 42s linear infinite;
+}
+/* Applied as a class, never through an inline `style` prop: motion owns the
+   style attribute on the elements it animates and drops the CSS animation
+   shorthand written there. Per-element speed comes from --dash-duration. */
+.animate-dash {
+  animation: gg-dash var(--dash-duration, 26s) linear infinite;
+}
+.animate-float {
+  animation: gg-float 7s var(--ease-brand) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

@@ -102,6 +102,14 @@
  */
 html[dir='rtl'] {
   --font-display: 'Qomra', 'Segoe UI', Tahoma, sans-serif;
+
+  /*
+   * Qomra sits optically smaller than the Latin face at the same pixel size,
+   * so Arabic labels read cramped next to their English equivalents. Scaling
+   * the root rather than patching individual classes lifts every rem-based
+   * size at once and keeps spacing in proportion with the larger type.
+   */
+  font-size: 106.5%;
 }
 
 /* ─────────────────────────────────  Base layer  ────────────────────────────── */
@@ -273,6 +281,35 @@ html[dir='rtl'] {
 
   html[dir='rtl'] .font-qima {
     font-family: var(--font-qima);
+  }
+
+  /*
+   * Arabic corrections for the eyebrow/meta type, applied once instead of
+   * patched per component. The Latin treatment of those labels leans on three
+   * things that do not carry over:
+   *   - very small sizes, where Qomra's glyphs turn illegible;
+   *   - `uppercase`, which is inert in a unicameral script and only signals
+   *     that the styling was designed for Latin;
+   *   - wide tracking, which visually severs the cursive joins between
+   *     letters and is the single worst thing to do to Arabic text.
+   * These selectors outrank the per-element utilities they correct, so they
+   * have to live in this layer too.
+   */
+  html[dir='rtl'] .uppercase {
+    text-transform: none;
+  }
+
+  html[dir='rtl'] [class*='tracking-'] {
+    letter-spacing: normal;
+  }
+
+  html[dir='rtl'] [class*='text-[0.5'],
+  html[dir='rtl'] [class*='text-[0.6'] {
+    font-size: 0.86rem;
+  }
+
+  html[dir='rtl'] [class*='text-[0.7'] {
+    font-size: 0.91rem;
   }
 }
 

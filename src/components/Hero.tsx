@@ -1,5 +1,13 @@
-import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from 'motion/react';
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
 import { useLang } from '@/lib/lang';
 import { scrollToId } from '@/lib/scroll';
 import { MAP_VIEWBOX, SYRIA_PATH } from '@/data/syria-map';
@@ -39,14 +47,16 @@ function NetworkBackdrop() {
       aria-hidden="true"
     >
       <defs>
+        {/* Opaque enough to carry its own contrast: the map sits over
+            photography that is now only lightly scrimmed. */}
         <linearGradient id="hero-map-fill" x1="0" y1="0" x2="0.6" y2="1">
-          <stop offset="0%" stopColor="#17578f" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="#04182e" stopOpacity="0.2" />
+          <stop offset="0%" stopColor="#0a4278" stopOpacity="0.92" />
+          <stop offset="100%" stopColor="#030f1e" stopOpacity="0.82" />
         </linearGradient>
         <linearGradient id="hero-route" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#cfa63c" stopOpacity="0.1" />
-          <stop offset="50%" stopColor="#e3cd7c" stopOpacity="0.9" />
-          <stop offset="100%" stopColor="#cfa63c" stopOpacity="0.1" />
+          <stop offset="0%" stopColor="#e3cd7c" stopOpacity="0.45" />
+          <stop offset="50%" stopColor="#fdf8e9" stopOpacity="1" />
+          <stop offset="100%" stopColor="#e3cd7c" stopOpacity="0.45" />
         </linearGradient>
         <filter id="hero-pin-glow" x="-150%" y="-150%" width="400%" height="400%">
           <feGaussianBlur stdDeviation="9" result="b" />
@@ -60,10 +70,11 @@ function NetworkBackdrop() {
       <motion.path
         d={SYRIA_PATH}
         fill="url(#hero-map-fill)"
-        stroke="#e3cd7c"
-        strokeOpacity="0.55"
-        strokeWidth="2"
+        stroke="#f7edc6"
+        strokeOpacity="0.9"
+        strokeWidth="2.6"
         strokeLinejoin="round"
+        style={{ filter: 'drop-shadow(0 6px 22px rgba(3,15,30,0.85))' }}
         initial={{ pathLength: 0, opacity: 0 }}
         animate={{ pathLength: 1, opacity: 1 }}
         transition={{ pathLength: { duration: 2.6, ease: 'easeInOut' }, opacity: { duration: 0.8 } }}
@@ -130,6 +141,31 @@ export function Hero() {
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
   const mapY = useTransform(scrollYProgress, [0, 1], ['0%', '-14%']);
 
+  // Pointer parallax. Layers move by different amounts and the photograph
+  // moves against the foreground, which reads as depth rather than drift.
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const springCfg = { stiffness: 55, damping: 18, mass: 0.7 };
+  const px = useSpring(mx, springCfg);
+  const py = useSpring(my, springCfg);
+  const photoX = useTransform(px, [-0.5, 0.5], [-18, 18]);
+  const photoY = useTransform(py, [-0.5, 0.5], [-12, 12]);
+  const mapX = useTransform(px, [-0.5, 0.5], [26, -26]);
+  const mapMouseY = useTransform(py, [-0.5, 0.5], [18, -18]);
+  const copyX = useTransform(px, [-0.5, 0.5], [8, -8]);
+
+  const trackPointer = (e: MouseEvent<HTMLElement>) => {
+    if (reduce) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    mx.set((e.clientX - r.left) / r.width - 0.5);
+    my.set((e.clientY - r.top) / r.height - 0.5);
+  };
+
+  const resetPointer = () => {
+    mx.set(0);
+    my.set(0);
+  };
+
   // Auto-advance; restarts whenever the slide changes, so manual picks
   // get a full turn rather than the remainder of the previous one.
   useEffect(() => {
@@ -150,32 +186,52 @@ export function Hero() {
   const current = SLIDES[slide];
 
   return (
-    <section ref={ref} className="noise relative min-h-[100svh] overflow-hidden bg-ink-950">
+    <section
+      ref={ref}
+      onMouseMove={trackPointer}
+      onMouseLeave={resetPointer}
+      className="noise relative min-h-[100svh] overflow-hidden bg-ink-950"
+    >
       {/* ── slideshow layer ───────────────────────────────────────────── */}
-      <motion.div className="absolute inset-0 overflow-hidden" style={{ y: reduce ? 0 : imgY }}>
-        <AnimatePresence initial={false}>
-          <motion.div
-            key={slide}
-            className="absolute inset-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: FADE_S, ease: 'easeInOut' }}
-          >
+      {/* inset bleed gives the pointer parallax room to move without
+          exposing the edge of the photograph */}
+      <motion.div className="absolute inset-[-3%]" style={{ y: reduce ? 0 : imgY }}>
+        <motion.div
+          className="absolute inset-0 overflow-hidden"
+          style={{ x: reduce ? 0 : photoX, y: reduce ? 0 : photoY }}
+        >
+          <AnimatePresence initial={false}>
             <motion.div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${current.src})` }}
-              initial={reduce ? false : current.from}
-              animate={{ scale: 1, x: '0%', y: '0%' }}
-              transition={{ duration: SLIDE_MS / 1000 + FADE_S, ease: 'linear' }}
-            />
-          </motion.div>
-        </AnimatePresence>
+              key={slide}
+              className="absolute inset-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: FADE_S, ease: 'easeInOut' }}
+            >
+              <motion.div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{
+                  backgroundImage: `url(${current.src})`,
+                  filter: 'contrast(1.06) saturate(1.08)',
+                }}
+                initial={reduce ? false : current.from}
+                animate={{ scale: 1, x: '0%', y: '0%' }}
+                transition={{ duration: SLIDE_MS / 1000 + FADE_S, ease: 'linear' }}
+              />
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
 
-        {/* base wash, then a directional gradient that keeps the copy side darkest */}
-        <div className="absolute inset-0 bg-ink-950/68" />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink-950/75 via-ink-950/30 to-ink-950" />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink-950 via-ink-950/55 to-ink-950/45 rtl:bg-gradient-to-l" />
+        {/*
+          Scrims are deliberately light so the photography stays readable.
+          Legibility is bought with a directional gradient over the copy column
+          rather than by dimming the whole frame, which is what flattened the
+          images before.
+        */}
+        <div className="absolute inset-0 bg-ink-950/22" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink-950/65 via-transparent to-ink-950" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink-950/96 via-ink-950/40 to-transparent rtl:bg-gradient-to-l" />
       </motion.div>
 
       {/* soft gold bloom behind the headline */}
@@ -188,7 +244,10 @@ export function Hero() {
       >
         <div className="grid w-full items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.82fr)] lg:gap-12">
           {/* copy column */}
-          <motion.div className="min-w-0" style={{ y: reduce ? 0 : contentY }}>
+          <motion.div
+            className="min-w-0"
+            style={{ y: reduce ? 0 : contentY, x: reduce ? 0 : copyX }}
+          >
             <motion.div
               className="inline-flex w-fit items-center gap-2.5 rounded-full border border-gold-300/22 bg-ink-900/45 py-2 ps-3 pe-4 backdrop-blur-md"
               initial={{ opacity: 0, y: 18 }}
@@ -247,9 +306,23 @@ export function Hero() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.4, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="mx-auto aspect-[1000/898] w-full max-w-[30rem]">
-              <NetworkBackdrop />
-            </div>
+            <motion.div
+              className="relative mx-auto aspect-[1000/898] w-full max-w-[30rem]"
+              style={{ x: reduce ? 0 : mapX, y: reduce ? 0 : mapMouseY }}
+            >
+              {/* Dark pool behind the map so it reads against bright frames
+                  of the slideshow without re-darkening the whole hero. */}
+              <div
+                className="pointer-events-none absolute inset-[-18%]"
+                style={{
+                  background:
+                    'radial-gradient(closest-side, rgba(3,15,30,0.82), rgba(3,15,30,0.45) 62%, transparent 100%)',
+                }}
+              />
+              <div className="relative h-full w-full">
+                <NetworkBackdrop />
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </motion.div>

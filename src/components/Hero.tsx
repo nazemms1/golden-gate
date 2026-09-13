@@ -70,12 +70,16 @@ function NetworkBackdrop() {
       />
 
       {/*
-        Route geometry is static; only opacity is animated. Two earlier
-        approaches failed here and are worth not repeating: motion's
-        `pathLength` fights the CSS dash animation over stroke-dashoffset
-        (visible stutter), and motion does not animate the `x2`/`y2`
-        attributes at all, which collapses every line to zero length.
-        The travelling dashes alone carry the sense of movement.
+        Routes are static geometry revealed with a staggered fade. Three other
+        approaches were tried here and all broke — worth not repeating:
+          - motion `pathLength` + a CSS dash animation both write
+            stroke-dashoffset, and the lines visibly stutter;
+          - motion does not animate the `x2`/`y2` attributes, which collapses
+            every line to zero length;
+          - putting strokeDashoffset in motion's `animate` alongside opacity
+            drops the opacity animation, leaving the lines invisible.
+        CSS animations do not run inside this SVG subtree either, so the
+        movement in the hero comes from the slideshow and the pins instead.
       */}
       {all
         .filter((s) => s.id !== hub.id)
@@ -90,17 +94,9 @@ function NetworkBackdrop() {
             strokeWidth="1.6"
             strokeDasharray="8 12"
             strokeLinecap="round"
-            initial={{ opacity: 0, strokeDashoffset: 0 }}
-            animate={{ opacity: 0.85, strokeDashoffset: -200 }}
-            transition={{
-              opacity: { duration: 1.1, delay: 0.7 + i * 0.055, ease: 'easeOut' },
-              // 200 is a whole number of 8+12 dash periods, so the loop is seamless
-              strokeDashoffset: {
-                duration: 5 + (i % 5) * 1.2,
-                repeat: Infinity,
-                ease: 'linear',
-              },
-            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.85 }}
+            transition={{ duration: 1.1, delay: 0.7 + i * 0.055, ease: 'easeOut' }}
           />
         ))}
 
